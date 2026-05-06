@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Recipe Library</title>
+</head>
+<body>
+
+	<h1>Recipe Library</h1>
+
+	<a href="/">Home</a> |
+	<a href="/favorites">Fave Five</a> |
+	<a href="/search">Search</a> |
+	<a href="/add">Add Recipe</a>
+
+	<hr>
+
+	<ul>
+		<li th:each="recipe : ${recipes}">
+		<strong th:text="${recipe.name}"></strong>
+
+			<p>
+				Protein: <span th:text="${recipe.protein}"></span>
+			</p>
+			
+			<p>
+				Tag: <span th:text="${recipe.tag}"></span>
+			</p>
+
+			<p th:text="${recipe.instructions}"></p>
+			<details>
+				<summary>Ingredients</summary>
+				<ul>
+					<li th:each="i : ${recipe.ingredients}" th:text="${i}"></li>
+				</ul>
+			</details>
+
+			<form th:if="${!favoriteIds.contains(recipe.id)}"
+				th:action="@{'/favorite/' + ${recipe.id}}" method="post">
+				<button type="submit">Add to Favorites</button>
+			</form>
+			
+			<span th:if="${favoriteIds.contains(recipe.id)}">❤️ Favorite</span>
+
+			<form th:action="@{'/update/' + ${recipe.id}}" method="get">
+				<button type="submit">Update</button>
+			</form>
+
+			<form th:action="@{'/delete/' + ${recipe.id}}" method="post">
+				<button type="submit">Delete</button>
+			</form>
+
+			<hr></li>
+	</ul>
+
+
+</body>
+</html>

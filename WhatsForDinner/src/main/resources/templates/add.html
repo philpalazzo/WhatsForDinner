@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Add Recipe</title>
+</head>
+<body>
+
+	<a href="/">Home</a> |
+	<a href="/recipes">Back to Library</a> |
+	<a href="/favorites">Fave Five</a> |
+	<a href="/search">Search</a>
+
+	<form method="post" action="/add" th:object="${recipe}">
+
+		<p>
+			Name: <input type="text" th:field="*{name}" required>
+		</p>
+
+		<p>
+			Protein: <input type="text" th:field="*{protein}">
+		</p>
+
+		<p>
+			Tag: <input type="text" th:field="*{tag}">
+		</p>
+
+		<p>Add Ingredient:</p>
+		<input type="text" id="ingredientInput">
+		<button type="button" onclick="add()">Add</button>
+
+		<ul id="list"></ul>
+
+		<input type="hidden" name="ingredientsInput" id="ingredientsInput">
+
+		<p>
+			Instructions:
+			<textarea th:field="*{instructions}"></textarea>
+		</p>
+
+		<button type="submit">Save</button>
+
+	</form>
+
+<script>
+const ingredients = [];
+
+const listEl = document.getElementById("list");
+const hiddenInput = document.getElementById("ingredientsInput");
+const input = document.getElementById("ingredientInput");
+
+function render() {
+    listEl.innerHTML = "";
+
+    ingredients.forEach((item, index) => {
+        const li = document.createElement("li");
+
+        const text = document.createTextNode(item + " ");
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = "x";
+        btn.onclick = () => remove(index);
+
+        li.appendChild(text);
+        li.appendChild(btn);
+
+        listEl.appendChild(li);
+    });
+
+    hiddenInput.value = ingredients.join(",");
+}
+
+function add() {
+    const val = input.value.trim();
+
+    if (!val) return;
+    if (ingredients.includes(val)) return;
+
+    ingredients.push(val);
+    input.value = "";
+    render();
+}
+
+function remove(index) {
+    ingredients.splice(index, 1);
+    render();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Search Recipes</title>
+</head>
+<body>
+
+	<a href="/">Home</a> |
+	<a href="/favorites">Fave Five</a> |
+	<a href="/recipes">Library</a> |
+	<a href="/add">Add Recipe</a>
+
+	<h1>Search Recipes</h1>
+
+	<form method="post" action="/search">
+
+		<p>
+			<label><input type="radio" name="mode" value="tag"
+				onclick="switchMode('tag')"> Tag</label> <label><input
+				type="radio" name="mode" value="protein"
+				onclick="switchMode('protein')"> Protein</label> <label><input
+				type="radio" name="mode" value="ingredients"
+				onclick="switchMode('ingredients')" checked> Ingredients</label>
+		</p>
+
+		<div id="tagBox">
+			<input type="text" name="tag" placeholder="Italian, Mexican..." />
+		</div>
+
+		<div id="proteinBox">
+			<input type="text" id="proteinInput"
+				placeholder="Add protein (chicken, beef, etc.)">
+			<button type="button" onclick="addProtein()">Add Protein</button>
+			<ul id="proteinList"></ul>
+			<input type="hidden" name="proteinsInput" id="proteinsInput">
+		</div>
+
+		<div id="ingredientBox">
+			<input type="text" id="ingredientInput" placeholder="Add ingredient">
+			<button type="button" onclick="addIngredient()">Add
+				Ingredient</button>
+			<ul id="ingredientList"></ul>
+			<input type="hidden" name="ingredientsInput" id="ingredientsInput">
+		</div>
+
+		<br>
+		<button type="submit">Search</button>
+
+
+	</form>
+
+	<hr>
+
+	<h2>Results</h2>
+
+	<p th:if="${isEmpty}">No results found.</p>
+
+	<ul>
+		<li th:each="recipe : ${recipes}"><strong
+			th:text="${recipe.name}"></strong>
+
+			<p>
+				Protein: <span th:text="${recipe.protein}"></span>
+			</p>
+			<p>
+				Tag: <span th:text="${recipe.tag}"></span>
+			</p>
+
+			<p th:text="${recipe.instructions}"></p>
+			<details>
+				<summary>Ingredients</summary>
+				<ul>
+					<li th:each="i : ${recipe.ingredients}" th:text="${i}"></li>
+				</ul>
+			</details>
+
+			<form th:if="${!recipe.favorite}"
+				th:action="@{'/favorite/' + ${recipe.id}}" method="post">
+				<button type="submit">Add to Favorites</button>
+			</form>
+			
+			<span th:if="${recipe.favorite}">❤️ Favorite</span>
+
+			<hr>
+		</li>
+	</ul>
+
+	<script>
+let ingredients = [];
+
+function switchMode(mode) {
+    document.getElementById("tagBox").style.display = "none";
+    document.getElementById("proteinBox").style.display = "none";
+    document.getElementById("ingredientBox").style.display = "none";
+
+    if (mode === "tag") {
+        document.getElementById("tagBox").style.display = "block";
+    }
+
+    if (mode === "protein") {
+        document.getElementById("proteinBox").style.display = "block";
+    }
+
+    if (mode === "ingredients") {
+        document.getElementById("ingredientBox").style.display = "block";
+    }
+}
+
+function addIngredient() {
+    let input = document.getElementById("ingredientInput");
+    let val = input.value.trim();
+
+    if (!val) return;
+
+    ingredients.push(val);
+    render();
+    input.value = "";
+}
+
+function render() {
+    let list = document.getElementById("ingredientList");
+    list.innerHTML = "";
+
+    ingredients.forEach((item, i) => {
+        let li = document.createElement("li");
+        li.innerHTML = item + " <button type='button' onclick='removeIngredient(" + i + ")'>x</button>";
+        list.appendChild(li);
+    });
+
+    document.getElementById("ingredientsInput").value = ingredients.join(",");
+}
+
+function removeIngredient(i) {
+    ingredients.splice(i, 1);
+    render();
+}
+
+switchMode("ingredients");
+</script>
+
+</body>
+</html>

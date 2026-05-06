@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Update Recipe</title>
+</head>
+<body>
+
+	<h1>Update Recipe</h1>
+
+	<a href="/">Home</a> |
+	<a href="/recipes">Back to Library</a> |
+	<a href="/search">Search</a> |
+	<a href="/add">Add Recipe</a>
+
+	<form method="post" th:action="@{'/update/' + ${recipe.id}}"
+		th:object="${recipe}">
+
+		<p>
+			Name: <input type="text" th:field="*{name}" required>
+		</p>
+
+		<p>
+			Protein: <input type="text" th:field="*{protein}">
+		</p>
+
+		<p>
+			Tag: <input type="text" th:field="*{tag}">
+		</p>
+
+		<p>Add Ingredient:</p>
+		<input type="text" id="ingredientInput">
+		<button type="button" onclick="add()">Add</button>
+
+		<ul id="list"></ul>
+
+		<input type="hidden" name="ingredientsInput" id="ingredientsInput">
+
+		<p>
+			Instructions:
+			<textarea th:field="*{instructions}"></textarea>
+		</p>
+
+		<button type="submit">Update</button>
+
+	</form>
+
+	<script th:inline="javascript">
+
+let arr = /*[[${recipe.ingredients}]]*/ [];
+
+function render() {
+    let list = document.getElementById("list");
+    list.innerHTML = "";
+
+    arr.forEach((item, i) => {
+        let li = document.createElement("li");
+        li.innerHTML = item + " <button type='button' onclick='remove(" + i + ")'>x</button>";
+        list.appendChild(li);
+    });
+
+    document.getElementById("ingredientsInput").value = arr.join(",");
+}
+
+function add() {
+    let input = document.getElementById("ingredientInput");
+    let val = input.value.trim();
+
+    if (!val) return;
+
+    arr.push(val);
+    input.value = "";
+    render();
+}
+
+function remove(i) {
+    arr.splice(i, 1);
+    render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
