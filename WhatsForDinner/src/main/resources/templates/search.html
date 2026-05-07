@@ -17,18 +17,13 @@
 		<p>
 
 
-			<label>
-				<input type="radio" name="mode" value="tag" th:checked="${mode == 'tag'}"
-					onclick="switchMode('tag')">Tag
-			</label>
-			<label>
-				<input type="radio" name="mode" value="protein"
-					th:checked="${mode == 'protein'}"
-					onclick="switchMode('protein')">Protein
-			</label>
-			<label>
-				<input type="radio" name="mode" value="ingredients" th:checked="${mode == 'ingredients'}"
-					onclick="switchMode('ingredients')">Ingredients
+			<label> <input type="radio" name="mode" value="tag"
+				th:checked="${mode == 'tag'}" onclick="switchMode('tag')">Tag
+			</label> <label> <input type="radio" name="mode" value="protein"
+				th:checked="${mode == 'protein'}" onclick="switchMode('protein')">Protein
+			</label> <label> <input type="radio" name="mode" value="ingredients"
+				th:checked="${mode == 'ingredients'}"
+				onclick="switchMode('ingredients')">Ingredients
 			</label>
 		</p>
 
@@ -87,7 +82,8 @@
 				</ul>
 			</details>
 
-			<form th:action="@{'/favorite/' + ${recipe.id}}" method="post">
+			<form th:unless="${favoriteIds.contains(recipe.id)}"
+				th:action="@{'/favorite/' + ${recipe.id}}" method="post">
 				<button type="submit">Add to Favorites</button>
 			</form> <span th:if="${favoriteIds.contains(recipe.id)}">❤️ Favorite</span>
 
