@@ -82,6 +82,7 @@ public class AppController {
         if (tag != null && !tag.isBlank()) {
             model.addAttribute("recipes", recipeService.searchByTag(tag));
             model.addAttribute("isEmpty", false);
+            model.addAttribute("favoriteIds", recipeService.getFavoriteIds());
             return "search";
         }
 
@@ -97,6 +98,8 @@ public class AppController {
 
         model.addAttribute("recipes", results);
         model.addAttribute("isEmpty", results.isEmpty());
+        
+        model.addAttribute("favoriteIds", recipeService.getFavoriteIds());
 
         return "search";
     }

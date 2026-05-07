@@ -27,19 +27,26 @@
 			<input type="text" name="tag" placeholder="Italian, Mexican..." />
 		</div>
 
+
+
 		<div id="proteinBox">
 			<input type="text" id="proteinInput"
 				placeholder="Add protein (chicken, beef, etc.)">
-			<button type="button" onclick="addProtein()">Add Protein</button>
-			<ul id="proteinList"></ul>
-			<input type="hidden" name="proteinsInput" id="proteinsInput">
 		</div>
 
 		<div id="ingredientBox">
+			<input type="text" id="ingredientProteinInput"
+				placeholder="Add protein filter (chicken, beef)">
+			<button type="button" onclick="addIngredientProtein()">Add
+				Protein</button>
+			<ul id="proteinList"></ul>
+
 			<input type="text" id="ingredientInput" placeholder="Add ingredient">
 			<button type="button" onclick="addIngredient()">Add
 				Ingredient</button>
 			<ul id="ingredientList"></ul>
+
+			<input type="hidden" name="proteinsInput" id="proteinsInput">
 			<input type="hidden" name="ingredientsInput" id="ingredientsInput">
 		</div>
 
@@ -66,44 +73,39 @@
 				Tag: <span th:text="${recipe.tag}"></span>
 			</p>
 
-			<p th:text="${recipe.instructions}"></p>
-			<details>
+			<p th:text="${recipe.instructions}"></p> <details>
 				<summary>Ingredients</summary>
 				<ul>
 					<li th:each="i : ${recipe.ingredients}" th:text="${i}"></li>
 				</ul>
 			</details>
 
-			<form th:if="${!recipe.favorite}"
-				th:action="@{'/favorite/' + ${recipe.id}}" method="post">
+			<form th:action="@{'/favorite/' + ${recipe.id}}" method="post">
 				<button type="submit">Add to Favorites</button>
-			</form>
-			
-			<span th:if="${recipe.favorite}">❤️ Favorite</span>
+			</form> <span th:if="${favoriteIds.contains(recipe.id)}">❤️ Favorite</span>
 
-			<hr>
-		</li>
+			<hr></li>
 	</ul>
 
 	<script>
 let ingredients = [];
+let proteins = [];
+let ingredientProteins = [];
 
 function switchMode(mode) {
     document.getElementById("tagBox").style.display = "none";
     document.getElementById("proteinBox").style.display = "none";
     document.getElementById("ingredientBox").style.display = "none";
-
-    if (mode === "tag") {
-        document.getElementById("tagBox").style.display = "block";
-    }
-
-    if (mode === "protein") {
-        document.getElementById("proteinBox").style.display = "block";
-    }
-
+    
+    if (mode === "tag") { document.getElementById("tagBox").style.display = "block"; }
+    
+    if (mode === "protein") { document.getElementById("proteinBox").style.display = "block"; }
+    
     if (mode === "ingredients") {
-        document.getElementById("ingredientBox").style.display = "block";
-    }
+    	document.getElementById("ingredientBox").style.display = "block";
+    	renderIngredients();
+    	renderIngredientProteins();
+    	}
 }
 
 function addIngredient() {
@@ -113,11 +115,11 @@ function addIngredient() {
     if (!val) return;
 
     ingredients.push(val);
-    render();
+    renderIngredients();
     input.value = "";
 }
 
-function render() {
+function renderIngredients() {
     let list = document.getElementById("ingredientList");
     list.innerHTML = "";
 
@@ -132,10 +134,40 @@ function render() {
 
 function removeIngredient(i) {
     ingredients.splice(i, 1);
-    render();
+    renderIngredients();
 }
 
-switchMode("ingredients");
+function addIngredientProtein() {
+	let list = document.getElementById("ingredientProteinInput");
+	let val = list.value.trim();
+	
+	if (!val) return;
+	
+	ingredientProteins.push(val);
+	renderIngredientProteins();
+	list.value = "";
+}
+	
+	function renderIngredientProteins() {
+		let list = document.getElementById("proteinList");
+		list.innerHTML = "";
+		
+		ingredientProteins.forEach((item, i) => {
+			let li = document.createElement("li");
+			li.innerHTML = item + " <button type='button' onclick='removeIngredientProtein(" + i + ")'>x</button>";
+			list.appendChild(li);
+		});
+		document.getElementById("proteinsInput").value = ingredientProteins.join(",");
+	}
+
+function removeIngredientProtein(i) {
+	ingredientProteins.splice(i, 1);
+	renderIngredientProteins();
+}
+
+window.onload = function () {
+    switchMode('ingredients'); // default view
+};
 </script>
 
 </body>
