@@ -15,22 +15,29 @@
 	<form method="post" action="/search">
 
 		<p>
-			<label><input type="radio" name="mode" value="tag"
-				onclick="switchMode('tag')"> Tag</label> <label><input
-				type="radio" name="mode" value="protein"
-				onclick="switchMode('protein')"> Protein</label> <label><input
-				type="radio" name="mode" value="ingredients"
-				onclick="switchMode('ingredients')" checked> Ingredients</label>
+
+
+			<label>
+				<input type="radio" name="mode" value="tag" th:checked="${mode == 'tag'}"
+					onclick="switchMode('tag')">Tag
+			</label>
+			<label>
+				<input type="radio" name="mode" value="protein"
+					th:checked="${mode == 'protein'}"
+					onclick="switchMode('protein')">Protein
+			</label>
+			<label>
+				<input type="radio" name="mode" value="ingredients" th:checked="${mode == 'ingredients'}"
+					onclick="switchMode('ingredients')">Ingredients
+			</label>
 		</p>
 
 		<div id="tagBox">
 			<input type="text" name="tag" placeholder="Italian, Mexican..." />
 		</div>
 
-
-
 		<div id="proteinBox">
-			<input type="text" id="proteinInput"
+			<input type="text" id="proteinInput" name="protein"
 				placeholder="Add protein (chicken, beef, etc.)">
 		</div>
 
@@ -166,7 +173,8 @@ function removeIngredientProtein(i) {
 }
 
 window.onload = function () {
-    switchMode('ingredients'); // default view
+    const mode = document.querySelector("input[name='mode']:checked")?.value || "tag";
+    switchMode(mode);
 };
 </script>
 

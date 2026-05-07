@@ -70,6 +70,14 @@ public class RecipeService {
     public List<Recipe> searchByTag(String tag) {
         return recipeRepository.findByTagContainingIgnoreCase(tag);
     }
+    
+    public List<Recipe> searchByProtein(String protein) {
+        String normalized = normalizeProtein(protein);
+
+        return getAllRecipes().stream()
+                .filter(r -> normalizeProtein(r.getProtein()).equals(normalized))
+                .toList();
+    }
 
     public List<Recipe> searchByIngredientsAndProteins(List<String> ingredients, List<String> proteins) {
         return searchService.searchByIngredientsAndProteins(ingredients, proteins);
